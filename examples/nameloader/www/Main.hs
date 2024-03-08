@@ -1,65 +1,72 @@
-import System.IO
-import Data.List
-import qualified Data.HashTable as HT
-import Control.Monad
 import Control.Concurrent
+import Control.Monad
+import qualified Data.HashTable as HT
+import Data.List
 import Network
+import System.IO
 
 import DynamicLoader.NameLoader
 
+main =
+  do
+    moduleh <- HT.new (==) HT.hashString
 
-main 
-    = do moduleh <- HT.new (==) HT.hashString 
+    setEnvironment Nothing Nothing (Just ppath) Nothing Nothing
 
-         setEnvironment Nothing Nothing (Just ppath) Nothing Nothing
+    basep <- loadModule "base"
+    h98p <- loadModule "haskell98"
 
-         basep <- loadModule "base"
-         h98p  <- loadModule "haskell98"
+    socket <- listenOn (PortNumber 8080)
 
-         socket <- listenOn (PortNumber 8080)
+    server moduleh socket
+  where
+    ppath = "/usr/lib/ghc-6.2/"
 
-         server moduleh socket
+server moduleh socket =
+  do
+    (handle, name, _) <- accept socket
+    forkIO (client moduleh handle)
+    server moduleh socket
 
-    where ppath = "/usr/lib/ghc-6.2/"
+client moduleh handle =
+  do
+    req <- hGetLine handle
 
-server moduleh socket 
-    = do (handle, name, _) <- accept socket
-         forkIO (client moduleh handle)
-         server moduleh socket
+    let mfile = parseRequest req
 
-client moduleh handle
-    = do req <- hGetLine handle
+    maybe (errorPage handle) (responsePage moduleh handle) mfile
 
-         let mfile = parseRequest req
+    hClose handle
 
-         maybe (errorPage handle) (responsePage moduleh handle) mfile
+parseRequest str =
+  let parts = words str
+   in case parts of
+        ["GET", name, "HTTP/1.1"] -> Just (toDot $ drop 1 name)
+        _ -> Nothing
+  where
+    toDot str = map (\a -> case a of '/' -> '.'; a -> a) str
 
-         hClose handle
+responsePage moduleh handle file =
+  do
+    mlm <- HT.lookup moduleh file
+    lm <- case mlm of
+      Just lm -> do
+        reloadModule lm True
+        return lm
+      Nothing -> do
+        lm <- loadModule file
+        HT.insert moduleh file lm
+        return lm
 
-parseRequest str 
-    = let parts = words str
-      in case parts of
-                    ["GET", name, "HTTP/1.1"] -> Just (toDot $ drop 1 name)
-                    _                         -> Nothing
-    where toDot str = map (\a -> case a of { '/' -> '.'; a -> a }) str
+    func <- loadFunction lm "page"
+    str <- func
 
-responsePage moduleh handle file
-    = do mlm <- HT.lookup moduleh file
-         lm <- case mlm of 
-                        Just lm -> do reloadModule lm True
-                                      return lm
-                        Nothing -> do lm <- loadModule file
-                                      HT.insert moduleh file lm
-                                      return lm
+    hPutStr handle hdr
+    hPutStr handle str
+  where
+    hdr = "HTTP/1.1 200 Ok\n\n"
 
-         func <- loadFunction lm "page"
-         str  <- func
-
-         hPutStr handle hdr
-         hPutStr handle str
-
-    where hdr = "HTTP/1.1 200 Ok\n\n"
-
-errorPage handle
-    = do hPutStrLn handle "HTTP/1.1 400 Bad Request\n"
-         hPutStr handle "<html><body>400 Bad Request</body></html>"
+errorPage handle =
+  do
+    hPutStrLn handle "HTTP/1.1 400 Bad Request\n"
+    hPutStr handle "<html><body>400 Bad Request</body></html>"

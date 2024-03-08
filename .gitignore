@@ -1,8 +1,9 @@
-dist
-cabal-dev
+dist-newstyle
+.direnv
 *.o
 *.hi
 *.chi
 *.chs.h
 
 *~
+

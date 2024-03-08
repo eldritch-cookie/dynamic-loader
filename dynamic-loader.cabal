@@ -1,59 +1,62 @@
-Name:                dynamic-loader
+cabal-version: 3.8
+name:          dynamic-loader
+version:       0.1.0
+synopsis:      lightweight loader of GHC-based modules or packages
+description:
+  This package allows the linking against GHC-compiled
+  object files and shared libraries. Specialized modules
+  are provided for navigating directory structure and
+  dependency checking.
+  .
+  No attempt at type-safe loading of symbols is made.
+  .
+  Release history:
+  .
+  [0.0] Initial version (testing Hackage build)
+  .
+  [0.0.1] Added support for archives
 
-Version:             0.0.1
-
-Synopsis:            lightweight loader of GHC-based modules or packages
-
-Description:         This package allows the linking against GHC-compiled
-                     object files and shared libraries. Specialized modules
-                     are provided for navigating directory structure and
-                     dependency checking.
-                     .
-                     No attempt at type-safe loading of symbols is made.
-                     .
-                     Release history:
-                     .
-                     [0.0] Initial version (testing Hackage build)
-                     .
-                     [0.0.1] Added support for archives
-
-Homepage:            https://github.com/ggreif/dynamic-loader
-Bug-reports:         https://github.com/ggreif/dynamic-loader/issues
-
-License:             BSD3
-License-file:        LICENSE
+homepage:      https://github.com/ggreif/dynamic-loader
+bug-reports:   https://github.com/ggreif/dynamic-loader/issues
+license:       BSD-3-Clause
+license-file:  LICENSE
 
 -- The package author(s).
-Author:              Hampus Ram
+author:        Hampus Ram
+maintainer:    Gabor Greif <ggreif+dynamic@gmail.com>
+copyright:
+  Copyright (c) 2003-2004, Hampus Ram;
+  (c) 2012-2016, Gabor Greif
 
-Maintainer:          Gabor Greif <ggreif+dynamic@gmail.com>
+category:      System
+stability:     experimental
+tested-with:   GHC == 9.8.2 
+build-type:    Simple
+data-files:    dynamic-linker.pdf
 
-Copyright:           Copyright (c) 2003-2004, Hampus Ram;
-                               (c) 2012-2016, Gabor Greif
-
-Category:            System
-
-Stability:           experimental
-Tested-with:         GHC == 7.6.3, GHC == 7.8.4, GHC == 7.10.2
-
-Build-type:          Simple
-
-Data-files:          dynamic-linker.pdf
-
-Cabal-version:       >= 1.6
-
-Library
+library
   -- Modules exported by the library.
-  Exposed-modules:     System.Plugins.DynamicLoader, System.Plugins.PathLoader, System.Plugins.NameLoader
-                       System.Plugins.Criteria.LoadCriterion, System.Plugins.Criteria.UnsafeCriterion
+  exposed-modules:
+    System.Plugins.Criteria.LoadCriterion
+    System.Plugins.Criteria.UnsafeCriterion
+    System.Plugins.DynamicLoader
+    System.Plugins.NameLoader
+    System.Plugins.PathLoader
 
-  Extensions:          CPP, ForeignFunctionInterface, MagicHash, ScopedTypeVariables, UnboxedTuples
-                       KindSignatures, TypeFamilies, MultiParamTypeClasses, FlexibleInstances
-                       ConstraintKinds
+  default-extensions:
+    CPP ForeignFunctionInterface MagicHash ScopedTypeVariables
+    UnboxedTuples KindSignatures TypeFamilies MultiParamTypeClasses
+    FlexibleInstances ConstraintKinds
 
   -- Packages needed in order to build this package.
-  Build-depends:       base >= 4.5 && < 5, directory, time, ghc-prim >= 0.2,
-                       hashable, hashtables, transformers
+  build-depends:
+      base          >=4.5 && <5
+    , directory
+    , ghc-prim      >=0.2
+    , hashable
+    , hashtables
+    , time
+    , transformers
 
   -- Modules not exported by this package.
   -- Other-modules:       
@@ -61,8 +64,9 @@ Library
   -- Extra tools (e.g. alex, hsc2hs, ...) needed to build the source.
   -- Build-tools:         
 
-  Ghc-Options:         -Wall
+  hs-source-dirs: src
+  ghc-options:     -Wall
 
-Source-repository head
+source-repository head
   type:     git
   location: git://github.com/ggreif/dynamic-loader.git
