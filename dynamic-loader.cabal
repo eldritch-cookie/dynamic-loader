@@ -30,7 +30,7 @@ copyright:
 
 category:      System
 stability:     experimental
-tested-with:   GHC == 9.8.2 
+tested-with:   GHC ==9.8.2
 build-type:    Simple
 data-files:    dynamic-linker.pdf
 
@@ -44,13 +44,20 @@ library
     System.Plugins.PathLoader
 
   default-extensions:
-    CPP ForeignFunctionInterface MagicHash ScopedTypeVariables
-    UnboxedTuples KindSignatures TypeFamilies MultiParamTypeClasses
-    FlexibleInstances ConstraintKinds
+    CPP
+    ConstraintKinds
+    FlexibleInstances
+    ForeignFunctionInterface
+    KindSignatures
+    MagicHash
+    MultiParamTypeClasses
+    ScopedTypeVariables
+    TypeFamilies
+    UnboxedTuples
 
   -- Packages needed in order to build this package.
   build-depends:
-      base          >=4.5 && <5
+    , base          >=4.5 && <5
     , directory
     , ghc-prim      >=0.2
     , hashable
@@ -64,8 +71,8 @@ library
   -- Extra tools (e.g. alex, hsc2hs, ...) needed to build the source.
   -- Build-tools:         
 
-  hs-source-dirs: src
-  ghc-options:     -Wall
+  hs-source-dirs:     src
+  ghc-options:        -Wall
 
 source-repository head
   type:     git

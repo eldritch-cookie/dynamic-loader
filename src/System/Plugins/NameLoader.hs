@@ -137,7 +137,7 @@ env =
 
 {- |
 
-Set the environment in wich all module loading will reside. If this
+Set the environment in which all module loading will reside. If this
 function isn't called the defaults will be used.
 
 The parameters are: Path to modules, module suffix, path to packages,
@@ -214,11 +214,11 @@ withDependencies crit from f =
 {- |
 
 Load a module (or package) and modules it depends on. It is possible
-to load a module many times without any error occuring. However to
+to load a module many times without any error occurring. However to
 unload a module one needs to call @unloadModule@ the same number of
 times.
 
-Before loading any modules you should add wich dependencies it has
+Before loading any modules you should add which dependencies it has
 with addDependency (and which dependencies the modules upon which it
 depends have).
 
@@ -227,7 +227,7 @@ updating the reference count. I.e. if dependencies have been updated
 they will be ignored until the module has been completely unloaded and
 loaded again.
 
-It treats names begining with uppercase letters (such as @Foo.Bar@) as
+It treats names beginning with uppercase letters (such as @Foo.Bar@) as
 modules and other names (such as @base@) as packages.
 
 If any error occurs an exception is thrown.
@@ -360,7 +360,7 @@ loadFunction crit (LM m) name =
 
 {- |
 
-Give the modification time for a loded module. Will throw an exception
+Give the modification time for a loaded module. Will throw an exception
 if the module isn't loaded.
 -}
 moduleLoadedAt :: LoadedModule -> IO UTCTime

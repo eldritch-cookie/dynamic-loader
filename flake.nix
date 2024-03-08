@@ -38,6 +38,14 @@
         system,
         ...
       }: {
+        _module.args.pkgs = let
+          pkgs' = import inputs.nixpkgs {inherit system;};
+        in
+          pkgs'
+          // {
+            haskell =
+              pkgs'.haskell // {ghc98 = config.haskellProjects.default.outputs.finalPackages;};
+          };
         # Per-system attributes can be defined here. The self' and inputs'
         # module parameters provide easy access to attributes of the same
         # system.
@@ -52,21 +60,30 @@
           };
         };
         treefmt.projectRootFile = "flake.nix";
-        pre-commit.settings.hooks = {
-          treefmt.enable = true;
-          typos.enable = true;
+        pre-commit.settings = {
+          hooks = {
+            treefmt.enable = true;
+            typos = {
+              enable = true;
+            };
+          };
+          settings = {
+            typos.ignored-words = [
+              "greif" # name of previous maintainer
+              "wheres" # fourmolu.yaml
+            ];
+          };
         };
         haskellProjects.default = {
           basePackages = pkgs.haskell.packages.ghc98;
           defaults.devShell.tools = hp: {inherit (hp) cabal-install;};
           devShell = {
-            tools = hp:
-              {
-                inherit (hp) fast-tags haskell-dap;
-              };
+            tools = hp: {
+              inherit (hp) fast-tags haskell-dap;
+            };
           };
         };
-        imports = [./checks.nix];
+        imports = [./checks];
       };
       flake = {
         # The usual flake attributes can be defined here, including system-

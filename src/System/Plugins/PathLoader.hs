@@ -192,10 +192,10 @@ withDependencies crit from f =
 
 Load a module (or package) and modules (or packages) it depends on. It
 is possible to load a module many times without any error
-occuring. However to unload a module one needs to call @unloadModule@
+occurring. However to unload a module one needs to call @unloadModule@
 the same number of times.
 
-Before loading any modules you should add wich dependencies it has
+Before loading any modules you should add which dependencies it has
 with addDependency (and which dependencies the modules upon which it
 depends have).
 
@@ -344,7 +344,7 @@ loadQualifiedFunction crit name =
 
 {- |
 
-Give the modification time for a loded module. Will throw an exception
+Give the modification time for a loaded module. Will throw an exception
 if the module isn't loaded.
 -}
 moduleLoadedAt :: LoadedModule -> IO UTCTime
